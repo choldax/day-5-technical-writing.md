@@ -225,4 +225,84 @@ If validation fails, the API should return an appropriate error response explain
 9. Conclusion
 The Create a New Task endpoint provides a structured way for authenticated users to add tasks to an existing project. The documentation identifies the endpoint, authentication requirements, request parameters, headers, sample JSON data, and possible HTTP response codes.
 Providing complete API documentation helps developers understand how to integrate the endpoint correctly, reduces implementation errors, and makes application maintenance easier.
+### 7. HTTP Response Codes
 
+The endpoint may return the following HTTP status codes depending on whether the task is created successfully or an error occurs.
+
+| Status Code | Response | Explanation |
+|---|---|---|
+| 201 | Created | The task was successfully created. |
+| 400 | Bad Request | The request contains invalid or incorrectly formatted data. |
+| 401 | Unauthorized | Authentication is missing or the access token is invalid. |
+| 403 | Forbidden | The authenticated user does not have permission to create tasks in this project. |
+| 404 | Not Found | The specified project or another referenced resource does not exist. |
+| 409 | Conflict | The request conflicts with the current project or task data. |
+| 415 | Unsupported Media Type | The request does not use a supported content type. |
+| 422 | Unprocessable Entity | The request format is valid, but one or more field values fail validation. |
+| 429 | Too Many Requests | The user has exceeded the allowed request rate. |
+| 500 | Internal Server Error | An unexpected server-side error occurred. |
+| 503 | Service Unavailable | The service is temporarily unavailable. |
+
+### 8. Successful Response Example
+
+When a task is created successfully, the API returns `201 Created` with a JSON response containing the new task's details.
+
+**HTTP Status:**
+```http
+HTTP/1.1 201 Created
+Content-Type: application/json
+```
+
+**Response Body:**
+```json
+{
+  "success": true,
+  "message": "Task created successfully",
+  "data": {
+    "id": 105,
+    "project_id": 12,
+    "title": "Prepare project report",
+    "description": "Complete the first project progress report.",
+    "assignee_id": 24,
+    "due_date": "2026-11-20",
+    "priority": "high",
+    "status": "pending",
+    "created_at": "2026-11-10T10:30:00Z"
+  }
+}
+```
+
+**Explanation:** The response confirms that the task was created and provides its assigned ID, project information, task details, status, and creation date.
+
+### 9. Error Response Example
+
+If the request contains invalid data, such as a missing task title, the API returns `400 Bad Request`.
+
+**HTTP Status:**
+```http
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+```
+
+**Response Body:**
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_REQUEST",
+    "message": "The request contains invalid data.",
+    "details": [
+      {
+        "field": "title",
+        "issue": "The title field is required."
+      }
+    ]
+  }
+}
+```
+
+**Explanation:** The error response informs the developer that the request was unsuccessful, identifies the field causing the problem, and explains how to correct it before submitting another request.
+
+### 10. Response Handling
+
+Developers should check the HTTP status code before processing the response body. A `201 Created` response confirms successful task creation. Error responses provide information that can help identify and correct problems. Developers should also handle temporary server errors appropriately and avoid repeatedly sending requests without checking their results.
